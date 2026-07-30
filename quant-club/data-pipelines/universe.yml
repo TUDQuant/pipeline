@@ -1,0 +1,34 @@
+# What the nightly pipeline keeps fresh.
+#
+# Keep this small and deliberate. Every symbol here is a nightly API call and a
+# file every member syncs. Add on request, remove when a lesson is over.
+
+equities:
+  start: "2015-01-01"
+  symbols:
+    - AAPL
+    - MSFT
+    - NVDA
+    - JPM
+    - XOM
+    - SPY      # index proxy, used in most lessons
+    - TLT      # long bonds, for the macro sessions
+    - ^GDAXI   # DAX, because half the club will ask
+
+crypto:
+  start: "2018-01-01"
+  exchanges: [binance, kraken, coinbase]
+  symbols:
+    - BTC/USDT
+    - ETH/USDT
+    - SOL/USDT
+
+macro:
+  start: "2000-01-01"
+  series:
+    - DGS10      # 10y treasury constant maturity
+    - DGS2       # 2y, for the curve
+    - CPIAUCSL   # US CPI
+    - UNRATE     # US unemployment
+    - VIXCLS     # VIX
+    - DEXUSEU    # USD/EUR

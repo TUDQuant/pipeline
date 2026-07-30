@@ -1,0 +1,23 @@
+# The exact stack the club runs on. Colab upgrades its preinstalled packages
+# without warning, so we pin and let bootstrap() shout if the runtime drifts.
+#
+# numpy is held below 2.0 on purpose: vectorbt depends on numba, and numba
+# support for numpy 2.x has lagged. Test any bump on a throwaway Colab runtime
+# before touching this file mid-semester.
+
+numpy==1.26.4
+pandas==2.2.2
+pyarrow==16.1.0
+requests==2.32.3
+PyYAML==6.0.2
+
+yfinance==0.2.54
+ccxt==4.3.74
+
+vectorbt==0.26.2
+backtrader==1.9.78.123
+
+google-api-python-client==2.137.0
+google-auth==2.32.0
+
+jupytext==1.16.2
