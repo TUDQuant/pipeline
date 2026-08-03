@@ -10,3 +10,4 @@ _data/
 # Never commit a service account key. It belongs in a GitHub secret.
 *service-account*.json
 .env
+.DS_Store

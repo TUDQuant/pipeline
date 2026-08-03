@@ -23,7 +23,14 @@
 
 # %%
 # --- bootstrap: the only setup cell any club notebook ever needs -------------
-# !pip install -q "tudquant[backtest] @ git+https://github.com/tud-quant/quant-club.git@v0.1.0"
+import importlib.util
+import subprocess
+import sys
+
+PACKAGE = "tudquant[backtest] @ git+https://github.com/TUDQuant/pipeline.git@main"
+
+if importlib.util.find_spec("tudquant") is None:
+    subprocess.run([sys.executable, "-m", "pip", "install", "-q", PACKAGE], check=True)
 
 import tudquant
 

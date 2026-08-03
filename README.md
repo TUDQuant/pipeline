@@ -18,7 +18,7 @@ If a cell fails, run [`colab/smoke_test.ipynb`](colab/) and post the output in t
 Every club notebook starts with this and nothing else:
 
 ```python
-!pip install -q "tudquant[backtest] @ git+https://github.com/tud-quant/quant-club.git@v0.1.0"
+!pip install -q "tudquant[backtest] @ git+https://github.com/TUDQuant/pipeline.git@main"
 import tudquant; tudquant.bootstrap()
 ```
 

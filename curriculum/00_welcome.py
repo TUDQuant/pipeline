@@ -19,11 +19,21 @@
 
 # %%
 # --- setup: do not change ----------------------------------------------------
-# !pip install -q "tudquant[backtest] @ git+https://github.com/tud-quant/quant-club.git@v0.1.0"
+# !pip install -q "tudquant[backtest] @ git+https://github.com/TUDQuant/pipeline.git@main"
+
+# --- bootstrap: the only setup cell any club notebook ever needs -------------
+import importlib.util
+import subprocess
+import sys
+
+PACKAGE = "tudquant[backtest] @ git+https://github.com/TUDQuant/pipeline.git@main"
+
+if importlib.util.find_spec("tudquant") is None:
+    subprocess.run([sys.executable, "-m", "pip", "install", "-q", PACKAGE], check=True)
 
 import tudquant
 
-tudquant.bootstrap()
+cfg = tudquant.bootstrap()
 
 # %% [markdown]
 # ## What data do we have?
