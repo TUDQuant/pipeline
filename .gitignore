@@ -1,0 +1,12 @@
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.ipynb_checkpoints/
+_data/
+.pytest_cache/
+.ruff_cache/
+*.egg-info/
+# Never commit a service account key. It belongs in a GitHub secret.
+*service-account*.json
+.env

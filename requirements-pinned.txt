@@ -1,20 +1,35 @@
-# The exact stack the club runs on. Colab upgrades its preinstalled packages
-# without warning, so we pin and let bootstrap() shout if the runtime drifts.
+# The exact stack the club runs on.
 #
-# numpy is held below 2.0 on purpose: vectorbt depends on numba, and numba
-# support for numpy 2.x has lagged. Test any bump on a throwaway Colab runtime
-# before touching this file mid-semester.
+# THIS SET IS LOAD-BEARING. It is the combination that passed all 11 smoke-test
+# checks on macOS / Python 3.10. Do not bump anything here mid-semester without
+# re-running the smoke test on a throwaway Colab runtime first.
+#
+# Why each awkward pin exists:
+#   numpy==1.23.5   vectorbt 0.26.2 -> numba <0.57 -> numpy <1.24.
+#                   1.26 looks newer and better and breaks the whole chain.
+#   numba/llvmlite  pinned explicitly so pip cannot "helpfully" resolve numba
+#                   to 0.6x, which drags numpy 2.x in behind it.
+#   plotly<6        vectorbt 0.26.2 references the 'heatmapgl' trace type,
+#                   which plotly 6 removed. Import fails outright without this.
+#   yfinance 1.5.x  older releases get YFRateLimitError from datacenter IPs.
+#                   1.5+ uses curl_cffi and gets through.
+#
+# Python 3.10 or 3.11 only. numba 0.56.4 has no wheels for 3.12+.
 
 numpy==1.23.5
-pandas==2.2.2
+pandas==2.3.3
 pyarrow==16.1.0
 requests==2.32.3
 PyYAML==6.0.2
 
-yfinance==0.2.54
+numba==0.56.4
+llvmlite==0.39.1
+
+yfinance==1.5.2
 ccxt==4.3.74
 
 vectorbt==0.26.2
+plotly==5.24.1
 backtrader==1.9.78.123
 
 google-api-python-client==2.137.0

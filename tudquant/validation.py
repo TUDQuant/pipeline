@@ -170,7 +170,13 @@ def _check_gaps(df: pd.DataFrame, report: QualityReport, calendar: str) -> None:
     positives on public holidays. That is the intended trade-off: we would
     rather a member sees a holiday flagged than misses a month of missing data.
     'daily' is used for crypto, which trades every day.
+
+    'none' disables the check. FRED series have no fixed frequency - CPI is
+    monthly, unemployment monthly, treasury yields business-daily - so there is
+    no calendar to compare against and any comparison produces a false alarm.
     """
+    if calendar == "none":
+        return
     if not isinstance(df.index, pd.DatetimeIndex) or len(df) < 2:
         return
 

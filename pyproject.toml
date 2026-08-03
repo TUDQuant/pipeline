@@ -7,7 +7,7 @@ name = "tudquant"
 version = "0.1.0"
 description = "TUD Quant club data layer and utilities"
 readme = "README.md"
-requires-python = ">=3.10"
+requires-python = ">=3.10,<3.12"  # numba 0.56.4 has no wheels for 3.12+
 license = { text = "MIT" }
 
 # Loose here so the package installs anywhere. The exact versions the club

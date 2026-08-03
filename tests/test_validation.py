@@ -71,3 +71,20 @@ def test_report_roundtrips_to_json(tmp_path):
 @pytest.mark.parametrize("calendar", ["business", "daily", "none"])
 def test_calendars_do_not_crash(calendar):
     validation.validate(series(), "CAL", "equities", calendar)
+
+
+def test_macro_monthly_series_is_not_gap_checked():
+    """Regression: FRED monthly series were flagged as 97% missing because the
+    'none' calendar fell through to a daily comparison."""
+    idx = pd.date_range("2000-01-01", periods=318, freq="MS")
+    df = pd.DataFrame({"cpiaucsl": np.linspace(170, 320, 318)}, index=idx)
+    report = validation.validate(df, "CPIAUCSL", "macro", calendar="none")
+    assert report.ok
+    assert not any(i.check == "gaps" for i in report.issues)
+
+
+def test_macro_business_daily_series_is_not_gap_checked():
+    idx = pd.bdate_range("2000-01-01", periods=6932)
+    df = pd.DataFrame({"dgs10": np.linspace(1, 5, 6932)}, index=idx)
+    report = validation.validate(df, "DGS10", "macro", calendar="none")
+    assert report.ok
