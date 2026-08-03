@@ -127,9 +127,9 @@ def _catalogue():
     return f"{len(cat)} datasets cached, {bad} failing quality"
 
 
-check("data directory", _data_root)
+check("data directory", _data_root, skip_if_offline=True)
 check("cache read/write", _cache_write)
-check("catalogue", _catalogue)
+check("catalogue", _catalogue, skip_if_offline=True)
 
 # %% [markdown]
 # ## 3. Live data sources
