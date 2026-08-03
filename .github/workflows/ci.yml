@@ -44,6 +44,7 @@ jobs:
         env:
           TUDQUANT_DATA_ROOT: ${{ github.workspace }}/_data
           TUDQUANT_SMOKE_OFFLINE: "1"
+          GIT_TERMINAL_PROMPT: "0"
         run: |
           jupytext --to notebook notebooks/smoke_test.py -o /tmp/smoke.ipynb
           jupyter nbconvert --to notebook --execute /tmp/smoke.ipynb --output /tmp/smoke_out.ipynb
