@@ -99,3 +99,4 @@ portfolio.stats()
 #
 # **Saving your work:** File → Save a copy in Drive keeps it in your own folder.
 # To contribute it back, convert to `.py` first — see `docs/notebooks.md`.
+# **Questions?** Ask in the infrastructure channel.
