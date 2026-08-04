@@ -23,14 +23,7 @@
 
 # %%
 # --- bootstrap: the only setup cell any club notebook ever needs -------------
-import importlib.util
-import subprocess
-import sys
-
-PACKAGE = "tudquant[backtest] @ git+https://github.com/TUDQuant/pipeline.git@main"
-
-if importlib.util.find_spec("tudquant") is None:
-    subprocess.run([sys.executable, "-m", "pip", "install", "-q", PACKAGE], check=True)
+# !pip install -q "tudquant[backtest] @ git+https://github.com/tud-quant/quant-club.git@v0.1.0"
 
 import tudquant
 
@@ -109,8 +102,13 @@ def _data_root():
 def _cache_write():
     import pandas as pd
 
+    # Deliberately does NOT create the directory. If it is missing that is the
+    # failure we want to see, not something to paper over by making an empty
+    # folder next to the real one.
+    if not cfg.cache_dir.parent.is_dir():
+        raise RuntimeError(f"{cfg.data_root} does not exist - not writing a probe into it")
+
     probe = Path(cfg.data_root) / "_smoke_probe.parquet"
-    probe.parent.mkdir(parents=True, exist_ok=True)
     pd.DataFrame({"x": [1, 2, 3]}).to_parquet(probe)
     back = pd.read_parquet(probe)
     probe.unlink()
@@ -128,7 +126,7 @@ def _catalogue():
 
 
 check("data directory", _data_root, skip_if_offline=True)
-check("cache read/write", _cache_write)
+check("cache read/write", _cache_write, skip_if_offline=True)
 check("catalogue", _catalogue, skip_if_offline=True)
 
 # %% [markdown]
