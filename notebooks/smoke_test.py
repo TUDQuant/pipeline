@@ -126,7 +126,7 @@ def _catalogue():
 
 
 check("data directory", _data_root, skip_if_offline=True)
-check("cache read/write", _cache_write)
+check("cache read/write", _cache_write, skip_if_offline=True)
 check("catalogue", _catalogue, skip_if_offline=True)
 
 # %% [markdown]
