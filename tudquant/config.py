@@ -11,8 +11,11 @@ import os
 from dataclasses import dataclass
 from pathlib import Path
 
-# Phase 1 default. Change the Shared Drive name here if the club renames it.
-COLAB_DATA_ROOT = "/content/drive/Shareddrives/TUD Quant/data"
+# Phase 1 default. Colab mounts Shared Drives case-sensitively, so we probe a
+# few spellings rather than hardcoding one - a capital-D "Data" folder that
+# works on macOS (case-insensitive) will NOT resolve here.
+COLAB_DRIVE_ROOT = "/content/drive/Shareddrives/TUD Quant"
+COLAB_DATA_CANDIDATES = ["Data", "data"]
 
 # Phase 2 default, used automatically once we are on JupyterHub.
 SERVER_DATA_ROOT = "/srv/tudquant/data"
@@ -50,6 +53,20 @@ class Config:
         return self.data_root / "quality"
 
 
+def _colab_data_root() -> Path:
+    """Find the data folder inside the Shared Drive.
+
+    Returns the first candidate that exists. If none do (Drive not mounted, or
+    the Shared Drive not added to this member's Drive) we return the preferred
+    spelling so the error message names a sensible path.
+    """
+    root = Path(COLAB_DRIVE_ROOT)
+    for name in COLAB_DATA_CANDIDATES:
+        if (root / name).is_dir():
+            return root / name
+    return root / COLAB_DATA_CANDIDATES[0]
+
+
 def resolve() -> Config:
     """Work out where data lives, in priority order."""
     explicit = os.environ.get(ENV_DATA_ROOT)
@@ -57,7 +74,7 @@ def resolve() -> Config:
         return Config(Path(explicit).expanduser(), "explicit")
 
     if in_colab():
-        return Config(Path(COLAB_DATA_ROOT), "colab")
+        return Config(_colab_data_root(), "colab")
 
     server = Path(SERVER_DATA_ROOT)
     if server.exists():

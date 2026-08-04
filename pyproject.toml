@@ -16,7 +16,7 @@ dependencies = [
   "pandas>=2.0,<3.0",
   "numpy>=1.23",
   "pyarrow>=14",
-  "requests>=2.31",
+  "requests>=2.31,<2.33",  # google-colab pins requests==2.32.4; do not exceed
   "PyYAML>=6.0",
   "yfinance>=0.2.40",
   "ccxt>=4.2",
