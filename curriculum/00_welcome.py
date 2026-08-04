@@ -19,21 +19,11 @@
 
 # %%
 # --- setup: do not change ----------------------------------------------------
-# !pip install -q "tudquant[backtest] @ git+https://github.com/TUDQuant/pipeline.git@main"
-
-# --- bootstrap: the only setup cell any club notebook ever needs -------------
-import importlib.util
-import subprocess
-import sys
-
-PACKAGE = "tudquant[backtest] @ git+https://github.com/TUDQuant/pipeline.git@main"
-
-if importlib.util.find_spec("tudquant") is None:
-    subprocess.run([sys.executable, "-m", "pip", "install", "-q", PACKAGE], check=True)
+# !pip install -q "tudquant[backtest] @ git+https://github.com/tud-quant/quant-club.git@v0.1.0"
 
 import tudquant
 
-cfg = tudquant.bootstrap()
+tudquant.bootstrap()
 
 # %% [markdown]
 # ## What data do we have?
@@ -79,8 +69,11 @@ import vectorbt as vbt
 price = aapl["close"]
 fast, slow = price.rolling(10).mean(), price.rolling(30).mean()
 
+# freq="1D" is required: vectorbt cannot infer a period length from a
+# business-day index, and .stats() raises without it.
 portfolio = vbt.Portfolio.from_signals(
-    price, entries=fast > slow, exits=fast < slow, init_cash=10_000, fees=0.001
+    price, entries=fast > slow, exits=fast < slow, init_cash=10_000, fees=0.001,
+    freq="1D",
 )
 portfolio.stats()
 

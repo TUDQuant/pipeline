@@ -20,7 +20,7 @@ __version__ = "0.1.0"
 # packages, and vectorbt's numba dependency is the usual casualty, so we check
 # rather than hope.
 REQUIRED = {
-    "numpy": ("1.23", "2.0"),
+    "numpy": ("1.23", "3.0"),
     "pandas": ("2.0", "3.0"),
 }
 
