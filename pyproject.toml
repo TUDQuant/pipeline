@@ -7,14 +7,14 @@ name = "tudquant"
 version = "0.1.0"
 description = "TUD Quant club data layer and utilities"
 readme = "README.md"
-requires-python = ">=3.10,<3.12"  # numba 0.56.4 has no wheels for 3.12+
+requires-python = ">=3.10"  # Colab runs 3.12 - never cap below it
 license = { text = "MIT" }
 
 # Loose here so the package installs anywhere. The exact versions the club
 # runs on are in requirements-pinned.txt, which is what Colab and CI install.
 dependencies = [
   "pandas>=2.0,<3.0",
-  "numpy>=1.23,<2.0",
+  "numpy>=1.23",
   "pyarrow>=14",
   "requests>=2.31",
   "PyYAML>=6.0",
@@ -23,7 +23,7 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
-backtest = ["vectorbt>=0.26", "backtrader>=1.9.78"]
+backtest = ["vectorbt>=1.0", "backtrader>=1.9.78"]
 pipeline = ["google-api-python-client>=2.120", "google-auth>=2.28"]
 dev = ["pytest>=8.0", "ruff>=0.4", "jupytext>=1.16", "nbconvert>=7.0", "ipykernel>=6.29"]
 
