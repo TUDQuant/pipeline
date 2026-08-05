@@ -12,7 +12,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
-          python-version: "3.10"
+          python-version: "3.12"
           cache: pip
 
       - name: Install
@@ -34,6 +34,26 @@ jobs:
           fi
           echo "No stray notebooks."
 
+      - name: Verify colab/ matches the sources
+        run: |
+          # Notebooks are generated from the .py sources by
+          # scripts/render_notebooks.py, which produces byte-identical output
+          # for identical input. CI re-renders and fails if the committed
+          # notebooks differ - it does not generate them, because a bot commit
+          # would land on the PR head without triggering a CI run and leave the
+          # required status check missing forever.
+          python scripts/render_notebooks.py
+          if ! git diff --quiet colab; then
+            echo ""
+            echo "colab/ is out of date. Run this locally and commit the result:"
+            echo ""
+            echo "    python scripts/render_notebooks.py"
+            echo ""
+            git diff --stat colab
+            exit 1
+          fi
+          echo "colab/ is current."
+
       - name: Lint
         run: ruff check tudquant data-pipelines
 
@@ -44,7 +64,6 @@ jobs:
         env:
           TUDQUANT_DATA_ROOT: ${{ github.workspace }}/_data
           TUDQUANT_SMOKE_OFFLINE: "1"
-          GIT_TERMINAL_PROMPT: "0"
         run: |
           jupytext --to notebook notebooks/smoke_test.py -o /tmp/smoke.ipynb
           jupyter nbconvert --to notebook --execute /tmp/smoke.ipynb --output /tmp/smoke_out.ipynb

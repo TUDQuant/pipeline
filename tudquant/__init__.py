@@ -2,7 +2,7 @@
 
 Members run exactly this, once, at the top of every notebook:
 
-    !pip install -q "tudquant @ git+https://github.com/tud-quant/quant-club.git@v0.1.0"
+    !pip install -q "tudquant @ git+https://github.com/TUDQuant/pipeline.git@main"
     import tudquant; tudquant.bootstrap()
 
 Everything after that is identical on Colab today and on JupyterHub later.
