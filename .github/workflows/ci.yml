@@ -34,6 +34,32 @@ jobs:
           fi
           echo "No stray notebooks."
 
+      - name: Verify colab/ matches the sources
+        run: |
+          # colab/*.ipynb is generated from curriculum/ and notebooks/ by
+          # jupytext. CI does NOT generate it - a bot commit would land on the
+          # PR head without triggering a CI run, leaving the required check
+          # missing and the PR permanently unmergeable. So CI verifies instead:
+          # you render locally, CI proves you did.
+          mkdir -p colab
+          for f in curriculum/*.py notebooks/*.py; do
+            [ -e "$f" ] || continue
+            jupytext --to notebook "$f" -o "colab/$(basename "${f%.py}").ipynb"
+          done
+          if ! git diff --quiet colab; then
+            echo ""
+            echo "colab/ is out of date with the .py sources. Run this locally,"
+            echo "then commit the result:"
+            echo ""
+            echo '  for f in curriculum/*.py notebooks/*.py; do'
+            echo '    jupytext --to notebook "$f" -o "colab/$(basename "${f%.py}").ipynb"'
+            echo '  done'
+            echo ""
+            git diff --stat colab
+            exit 1
+          fi
+          echo "colab/ is current."
+
       - name: Lint
         run: ruff check tudquant data-pipelines
 

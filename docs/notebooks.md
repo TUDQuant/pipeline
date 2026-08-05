@@ -20,6 +20,21 @@ That is good practice and we do it too — anything reusable belongs in `tudquan
 
 Because Colab cannot open a `.py` from GitHub with one click, and one-click is the entire onboarding promise. So we keep generated notebooks in `colab/` purely as build output.
 
+## Rendering
+
+Render locally before you commit:
+
+```bash
+for f in curriculum/*.py notebooks/*.py; do
+  jupytext --to notebook "$f" -o "colab/$(basename "${f%.py}").ipynb"
+done
+```
+
+CI verifies that `colab/` matches the sources and fails the PR if it does not.
+CI deliberately does not generate the notebooks itself: a bot commit would land
+on the PR head without triggering a CI run, which leaves the required status
+check missing and the pull request permanently unmergeable.
+
 `.gitattributes` marks them `linguist-generated` (they stay collapsed in PR diffs) and `merge=ours` (they never produce a conflict).
 
 ## Working day to day
