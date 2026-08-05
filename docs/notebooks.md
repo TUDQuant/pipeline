@@ -25,10 +25,13 @@ Because Colab cannot open a `.py` from GitHub with one click, and one-click is t
 Render locally before you commit:
 
 ```bash
-for f in curriculum/*.py notebooks/*.py; do
-  jupytext --to notebook "$f" -o "colab/$(basename "${f%.py}").ipynb"
-done
+python scripts/render_notebooks.py
 ```
+
+The script exists rather than a bare `jupytext` loop because nbformat 4.5 gives
+every cell a random `id`, so plain jupytext renders the same source to a
+different file each time. The script assigns deterministic ids instead, which is
+what makes "is `colab/` up to date?" a question a diff can answer.
 
 CI verifies that `colab/` matches the sources and fails the PR if it does not.
 CI deliberately does not generate the notebooks itself: a bot commit would land

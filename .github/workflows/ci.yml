@@ -12,7 +12,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
-          python-version: "3.10"
+          python-version: "3.12"
           cache: pip
 
       - name: Install
@@ -36,24 +36,18 @@ jobs:
 
       - name: Verify colab/ matches the sources
         run: |
-          # colab/*.ipynb is generated from curriculum/ and notebooks/ by
-          # jupytext. CI does NOT generate it - a bot commit would land on the
-          # PR head without triggering a CI run, leaving the required check
-          # missing and the PR permanently unmergeable. So CI verifies instead:
-          # you render locally, CI proves you did.
-          mkdir -p colab
-          for f in curriculum/*.py notebooks/*.py; do
-            [ -e "$f" ] || continue
-            jupytext --to notebook "$f" -o "colab/$(basename "${f%.py}").ipynb"
-          done
+          # Notebooks are generated from the .py sources by
+          # scripts/render_notebooks.py, which produces byte-identical output
+          # for identical input. CI re-renders and fails if the committed
+          # notebooks differ - it does not generate them, because a bot commit
+          # would land on the PR head without triggering a CI run and leave the
+          # required status check missing forever.
+          python scripts/render_notebooks.py
           if ! git diff --quiet colab; then
             echo ""
-            echo "colab/ is out of date with the .py sources. Run this locally,"
-            echo "then commit the result:"
+            echo "colab/ is out of date. Run this locally and commit the result:"
             echo ""
-            echo '  for f in curriculum/*.py notebooks/*.py; do'
-            echo '    jupytext --to notebook "$f" -o "colab/$(basename "${f%.py}").ipynb"'
-            echo '  done'
+            echo "    python scripts/render_notebooks.py"
             echo ""
             git diff --stat colab
             exit 1
@@ -70,7 +64,6 @@ jobs:
         env:
           TUDQUANT_DATA_ROOT: ${{ github.workspace }}/_data
           TUDQUANT_SMOKE_OFFLINE: "1"
-          GIT_TERMINAL_PROMPT: "0"
         run: |
           jupytext --to notebook notebooks/smoke_test.py -o /tmp/smoke.ipynb
           jupyter nbconvert --to notebook --execute /tmp/smoke.ipynb --output /tmp/smoke_out.ipynb
