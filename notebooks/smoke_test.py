@@ -46,6 +46,15 @@ OFFLINE = os.environ.get("TUDQUANT_SMOKE_OFFLINE") == "1"
 RESULTS = []
 
 
+class NotApplicable(Exception):
+    """Raise when a check cannot run here and that is CORRECT, not a fault.
+
+    The difference matters: this notebook says "if anything says FAIL, do not
+    start the lesson". A member seeing FAIL for something that was never meant
+    to work in their session learns to ignore the summary, which defeats it.
+    """
+
+
 def check(name, fn, skip_if_offline=False):
     """Run one component check. Never raises — we want the full picture."""
     if skip_if_offline and OFFLINE:
@@ -60,6 +69,10 @@ def check(name, fn, skip_if_offline=False):
         RESULTS.append((name, "PASS", f"{detail} [{elapsed:.1f}s]"))
         print(f"PASS  {name}: {detail}")
         return detail
+    except NotApplicable as exc:
+        RESULTS.append((name, "SKIP", str(exc)))
+        print(f"SKIP  {name}: {exc}")
+        return None
     except Exception as exc:  # noqa: BLE001
         RESULTS.append((name, "FAIL", f"{type(exc).__name__}: {exc}"))
         print(f"FAIL  {name}: {type(exc).__name__}: {exc}")
@@ -158,7 +171,10 @@ def _ccxt():
 
 def _fred():
     if not os.environ.get("FRED_API_KEY"):
-        raise RuntimeError("no FRED key in this session (expected for members)")
+        # Normal for every member: club API keys live in the nightly pipeline,
+        # never in a member session. Macro data reaches members through the
+        # cache, which the catalogue check above already verified.
+        raise NotApplicable("no FRED key in this session - normal for members")
     df = data.fetch_live("DGS10", "macro", start="2024-01-01")
     return f"{len(df)} rows"
 
