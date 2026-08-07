@@ -22,7 +22,7 @@ messages back and forth. That loop is where the time goes.
 
 | Task | Surface |
 |---|---|
-| Push the repo, wire branch protections | Claude Code |
+| Fix a failing workflow or pipeline run | Claude Code |
 | First pipeline run fails — diagnose and fix | **Claude Code.** The whole loop is read log → edit → re-run. |
 | numpy/numba/vectorbt version conflict | Claude Code. It has to actually install and import to know. |
 | Write curriculum lessons | Claude Code (uses the `tudquant-lesson` skill) or Cowork |
@@ -169,6 +169,39 @@ not yours, a real member's. Environments break silently between lessons.
 skill, not into your memory. You are building something that outlives your
 involvement, which is the actual difference between a club project and a
 personal one.
+
+---
+
+## 7. What the build actually taught
+
+Kept because each of these cost real time and none was obvious in advance.
+
+**Give the agent the repo, not file copies.** Most of the wasted cycles in this
+build came from an assistant reasoning about a copy of the code while the real
+repo diverged. Fixes made in one place were silently reverted when a stale file
+was pasted back over them — three times, including the same bootstrap cell
+twice. Claude Code reading the actual working tree does not have this failure
+mode.
+
+**Test in the target environment, not the convenient one.** A full green local
+smoke test proved nothing about Colab. The stack that passed 11/11 on a laptop
+was uninstallable for every member. Anything that changes dependencies gets
+tested on a throwaway Colab runtime before it merges.
+
+**Verify the deploy, not the push.** Three separate times a change was believed
+shipped when the PR was still open. `git push` is not the last step; `gh pr
+merge` and a `git pull` on `main` are.
+
+**Read the failure rather than pattern-matching it.** The two hardest bugs — the
+CI hang and the unmergeable PR — both looked like flaky infrastructure and were
+neither. One was jupytext un-commenting a shell command that pointed at a
+nonexistent repo; the other was GitHub declining to trigger workflows for
+`GITHUB_TOKEN` pushes. Both were found by reading logs, not by retrying.
+
+**When a design keeps hitting the platform, change the design.** Notebook
+generation went through three versions before working, and the version that
+works removed the bot entirely rather than negotiating with branch protection.
+The third design is also the simplest.
 
 ---
 
