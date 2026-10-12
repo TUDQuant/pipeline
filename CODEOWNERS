@@ -1,11 +1,22 @@
-# Anything touching the data layer, the pipelines or CI needs an infra review.
-# Curriculum content does not - Marven's team owns that and should not wait on us.
+# Team slugs must match the org exactly (TUDQuant). GitHub silently ignores
+# CODEOWNERS entries that reference a team it cannot resolve - there is no
+# error, the file just stops doing anything. Verify on the repo's CODEOWNERS
+# settings page after any change.
+#
+# NOTE: this file requests REVIEW, it does not restrict WRITE. GitHub has no
+# per-directory write permission. Enforcement comes from branch protection with
+# "Require review from Code Owners" enabled - until then this file is advisory.
 
-/tudquant/            @tud-quant/infrastructure
-/data-pipelines/      @tud-quant/infrastructure
-/.github/             @tud-quant/infrastructure
-requirements-pinned.txt @tud-quant/infrastructure
-pyproject.toml        @tud-quant/infrastructure
+# The data layer, the pipelines and CI need an infrastructure review.
+/tudquant/              @TUDQuant/infrastructure
+/data-pipelines/        @TUDQuant/infrastructure
+/scripts/               @TUDQuant/infrastructure
+/.github/               @TUDQuant/infrastructure
+requirements-pinned.txt @TUDQuant/infrastructure
+pyproject.toml          @TUDQuant/infrastructure
 
-/curriculum/          @tud-quant/curriculum
-/strategies/          @tud-quant/members
+# Curriculum content is Marven's team and should not wait on infrastructure.
+/curriculum/            @TUDQuant/curriculum
+
+# Member strategy work needs no gatekeeper.
+/strategies/            @TUDQuant/members

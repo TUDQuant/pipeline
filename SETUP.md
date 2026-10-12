@@ -16,16 +16,41 @@ On a private repo every member needs a personal access token, which is exactly
 the per-member manual step the design exists to eliminate. Public also gives
 free branch protection and lets members link the work when they apply somewhere.
 
-Teams:
-
-| Team | Members | Access |
-|---|---|---|
-| `infrastructure` | you + 1 backup | Admin |
-| `curriculum` | Marven + content authors | Write on `curriculum/` |
-| `members` | everyone | Write on `strategies/`, Read elsewhere |
-
 **Never a single shared account.** Every commit would be attributed to one
 identity, destroying the attribution members join for.
+
+### Teams and what permissions actually do
+
+GitHub permissions are **repo-wide**. There is no per-directory write
+permission — a team with Write can push a branch touching any path. Path-level
+control exists only as *required review*, via `CODEOWNERS` plus branch
+protection.
+
+| Team | Who | Repo role |
+|---|---|---|
+| `infrastructure` | Noam + a backup | Admin |
+| `curriculum` | Marven + content authors | Write |
+| `members` | everyone | Write |
+
+Write is safe here because `main` is protected: nobody can push to it, so the
+worst anyone can do unilaterally is open a PR. What stops a member quietly
+changing the data layer is `CODEOWNERS` — but only once **"Require review from
+Code Owners"** is enabled in the ruleset, which needs a reviewer who is not the
+author.
+
+**While infrastructure is one person, leave Code Owners review off and required
+approvals at 0.** Turning it on now means infrastructure changes cannot be
+merged and nothing ships. Turn both on the day a second person joins
+`infrastructure` — that is the actual unlock, not a calendar date.
+
+If you would rather members not have Write at all, give `members` **Read** and
+have them fork and open PRs from the fork. More friction per contribution,
+stricter by default. For a club whose point is that students contribute
+strategies, Write plus a protected `main` is the better trade.
+
+`CODEOWNERS` team slugs must match the org exactly (`@TUDQuant/...`). GitHub
+ignores unresolvable teams silently — no error, the file just does nothing.
+Check the repo's CODEOWNERS settings page after editing it.
 
 ### Branch protection ruleset
 
@@ -43,6 +68,33 @@ Settings → Rules → Rulesets, targeting `main`:
 
 Do not attempt to give GitHub Actions a bypass — it is not an available bypass
 actor. See `docs/notebooks.md` for why nothing in CI needs to push to `main`.
+
+### On the repo name and what members can see
+
+The repo is called `pipeline` but holds the library, the pipelines, the
+curriculum and member strategies. The name is narrower than the contents.
+Renaming it (e.g. to `quant`) is cheap — GitHub redirects the old URL — but the
+bootstrap string appears in nine files including two generated notebooks, so it
+is a small PR rather than a settings toggle. Worth doing before the cohort
+arrives and starts bookmarking things; not worth doing mid-semester.
+
+Splitting into separate repos is worse here: it breaks the one-line install, and
+cross-repo coordination is real overhead for a club where the same two or three
+people touch everything.
+
+**Because the repo is public, members see all of it** — there is no clone link
+to share and nothing is gated. `ARCHITECTURE.md`, `SETUP.md` and
+`docs/working-with-claude.md` are as visible as the curriculum. That is fine and
+mostly good: the decision record is the most useful thing a member can read to
+understand why the environment looks the way it does.
+
+Nothing in these docs is a credential. Secret *names* are public; values live in
+GitHub secrets. The service account email is an identifier, useless without the
+key.
+
+`docs/working-with-claude.md` is internal operations guidance rather than
+club-facing documentation. Harmless publicly; if that bothers you, move it to the
+org wiki rather than deleting it — a successor will want it.
 
 ## 2. Google Cloud service account
 
