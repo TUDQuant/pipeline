@@ -81,6 +81,8 @@ lesson; publishing it to the club is not.
 
 ## Contributing
 
+Step-by-step guides: [`docs/contributing.md`](docs/contributing.md) (login, branch, PR, merge, troubleshooting) and [`docs/data-universe.md`](docs/data-universe.md) (adding or removing stocks, crypto and macro series).
+
 Notebooks are committed as **`.py` files**, not `.ipynb`. After changing any
 notebook source:
 
