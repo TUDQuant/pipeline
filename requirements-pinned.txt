@@ -29,6 +29,10 @@ yfinance==1.5.2
 ccxt==4.3.74
 
 vectorbt==1.0.0
+# plotly is vectorbt's charting dependency and MUST stay below 7: plotly 7.0
+# removed the 'scattermapbox' trace type that vectorbt 1.0.0 references at
+# import time, so `import vectorbt` crashes. It was unpinned until it broke CI.
+plotly==6.9.0
 backtrader==1.9.78.123
 
 google-api-python-client==2.137.0
