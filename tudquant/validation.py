@@ -228,7 +228,7 @@ def _check_splits(df: pd.DataFrame, report: QualityReport) -> None:
     if "close" not in df.columns or len(df) < 3:
         return
 
-    returns = df["close"].pct_change()
+    returns = df["close"].ffill().pct_change()
     suspicious = returns[returns.abs() > SPLIT_SUSPICION_RETURN].dropna()
 
     for date, ret in suspicious.items():

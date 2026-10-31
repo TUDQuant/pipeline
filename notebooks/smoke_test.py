@@ -119,19 +119,22 @@ def _data_root():
     return str(cfg.data_root)
 
 
-def _cache_write():
+def _parquet_io():
+    """Check the parquet engine round-trips in this runtime.
+
+    Uses a local temp dir on purpose. Members have Viewer access to the Shared
+    Drive, so writing there fails for them by design - that would be a FAIL
+    for a permission that is correct. Reading the Drive is already covered by
+    the data directory and catalogue checks.
+    """
+    import tempfile
+
     import pandas as pd
 
-    # Deliberately does NOT create the directory. If it is missing that is the
-    # failure we want to see, not something to paper over by making an empty
-    # folder next to the real one.
-    if not cfg.cache_dir.parent.is_dir():
-        raise RuntimeError(f"{cfg.data_root} does not exist - not writing a probe into it")
-
-    probe = Path(cfg.data_root) / "_smoke_probe.parquet"
-    pd.DataFrame({"x": [1, 2, 3]}).to_parquet(probe)
-    back = pd.read_parquet(probe)
-    probe.unlink()
+    with tempfile.TemporaryDirectory() as tmp:
+        probe = Path(tmp) / "_smoke_probe.parquet"
+        pd.DataFrame({"x": [1, 2, 3]}).to_parquet(probe)
+        back = pd.read_parquet(probe)
     return f"read/write ok ({len(back)} rows)"
 
 
@@ -146,7 +149,7 @@ def _catalogue():
 
 
 check("data directory", _data_root, skip_if_offline=True)
-check("cache read/write", _cache_write, skip_if_offline=True)
+check("parquet read/write", _parquet_io)
 check("catalogue", _catalogue, skip_if_offline=True)
 
 # %% [markdown]
